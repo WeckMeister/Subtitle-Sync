@@ -12,7 +12,7 @@ from theme import RIBBON_BUTTON_STYLE
 import os
 icon_path = os.path.join("icons", "import_video.png")
 
-__version__ = __versionMinor__  + "11"
+__version__ = __versionMinor__  + "10"
 
 def load_icon(name, mode="light"):
     fname = f"{name}{'_dark' if mode == 'dark' else ''}.png"
@@ -607,6 +607,6 @@ class SubtitleSyncApp:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app_icon = load_icon("my_icon", root)
+    app_icon = load_icon("icons/my_icon", root)
     app = SubtitleSyncApp(root)
     root.mainloop()                

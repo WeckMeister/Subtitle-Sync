@@ -11,8 +11,9 @@ from version import __versionMinor__   # type: ignore
 from theme import RIBBON_BUTTON_STYLE
 import os
 icon_path = os.path.join("icons", "import_video.png")
+tk.PhotoImage(file=icon_path)
 
-__version__ = __versionMinor__  + "11"
+__version__ = __versionMinor__  + "08"
 
 def load_icon(name, mode="light"):
     fname = f"{name}{'_dark' if mode == 'dark' else ''}.png"
@@ -106,15 +107,6 @@ class SubtitleSyncApp:
     "change_left": tk.PhotoImage(file="icons/left_arrow.png"),
     "change_right": tk.PhotoImage(file="icons/right_arrow.png")
 }
-        
-       # tk.PhotoImage(file=icon_path)
-
-    def load_icon(path, master):
-        try:
-            return tk.PhotoImage(file=path, master=master)
-        except tk.TclError as e:
-            print(f"⚠ Couldn’t load icon: {path}")
-            return None
 
     def create_menu_bar(self):
         menu_bar = tk.Menu(self.root)
@@ -607,6 +599,5 @@ class SubtitleSyncApp:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app_icon = load_icon("my_icon", root)
     app = SubtitleSyncApp(root)
     root.mainloop()                

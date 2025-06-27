@@ -12,7 +12,7 @@ from theme import RIBBON_BUTTON_STYLE
 import os
 icon_path = os.path.join("icons", "import_video.png")
 
-__version__ = __versionMinor__  + "11"
+__version__ = __versionMinor__  + "12"
 
 def load_icon(name, mode="light"):
     fname = f"{name}{'_dark' if mode == 'dark' else ''}.png"
@@ -96,17 +96,6 @@ class SubtitleSyncApp:
         # ─── Feedback Panel ──────────────────────────────────────
         self.create_feedback_panel()
 
-        self.icons = {
-    "import_video": tk.PhotoImage(file="icons/import_video.png"),
-    "import_subtitle": tk.PhotoImage(file="icons/import_subtitle.png"),
-    "export": tk.PhotoImage(file="icons/export.png"),
-    "sync": tk.PhotoImage(file="icons/sync.png"),
-    "pause": tk.PhotoImage(file="icons/pause.png"),
-    "stop": tk.PhotoImage(file="icons/stop.png"),
-    "change_left": tk.PhotoImage(file="icons/left_arrow.png"),
-    "change_right": tk.PhotoImage(file="icons/right_arrow.png")
-}
-        
        # tk.PhotoImage(file=icon_path)
 
     def load_icon(path, master):
@@ -166,18 +155,13 @@ class SubtitleSyncApp:
             ("Pause", self.toggle_pause, "pause"),
             ("Stop", self.trigger_stop, "stop"),
             ("Left Subtitle", self.select_subtitle, "change_left"),
-            ("Right Subtitle", lambda: self.load_subtitle_to_right_pane(self.output_path.get()), "change_right")
+            ("Right Subtitle", self.select_right_subtitle, "change_right")
         ]
 
         for label, command, icon_key in btns:
             icon = self.icons.get(icon_key)
-            tk.Button(
-                ribbon,
-                text=label,
-                image=icon,
-                command=command,
-                **RIBBON_BUTTON_STYLE
-            ).pack(side="left", padx=2, pady=2)
+            btn = tk.Button(ribbon, text=label, image=icon, command=command, **RIBBON_BUTTON_STYLE)
+            btn.pack(side="left", padx=2, pady=2)
 
     def create_feedback_panel(self):
         self.feedback_frame = tk.Frame(self.root, bg="#f8f8f8", bd=1, relief="sunken")
@@ -189,6 +173,13 @@ class SubtitleSyncApp:
             font=("Segoe UI", 9)
         )
         self.feedback_label.pack(side="left", padx=8, pady=4)
+
+    def select_right_subtitle(self):
+        path = filedialog.askopenfilename(filetypes=[("Subtitle files", "*.srt")])
+        if path:
+            self.load_subtitle_to_right_pane(path)
+            self.right_label.config(text=f"⭢ Synced Subtitle: {os.path.basename(path)}")
+        self.update_status_bar()
 
     def show_app_overview(self):
         overview_text = (
@@ -607,6 +598,10 @@ class SubtitleSyncApp:
 
 if __name__ == "__main__":
     root = tk.Tk()
+    #test = tk.Toplevel(root)
+    #img = tk.PhotoImage(file="icons/import_video.png")
+    #tk.Label(test, image=img).pack()
+    #test.mainloop()
     app_icon = load_icon("my_icon", root)
     app = SubtitleSyncApp(root)
     root.mainloop()                

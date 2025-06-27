@@ -171,13 +171,8 @@ class SubtitleSyncApp:
 
         for label, command, icon_key in btns:
             icon = self.icons.get(icon_key)
-            tk.Button(
-                ribbon,
-                text=label,
-                image=icon,
-                command=command,
-                **RIBBON_BUTTON_STYLE
-            ).pack(side="left", padx=2, pady=2)
+            btn = tk.Button(ribbon, text=label, image=icon, command=command, **RIBBON_BUTTON_STYLE)
+            btn.pack(side="left", padx=2, pady=2)
 
     def create_feedback_panel(self):
         self.feedback_frame = tk.Frame(self.root, bg="#f8f8f8", bd=1, relief="sunken")

@@ -1,0 +1,20 @@
+issues to fix before moving on with roadmap:
+
+include technical doc in menu under help - embed it in your app as a “Developer Reference” tab or menu
+include application overview under help
+
+create ribbon under menu and add basic ribbon buttons for:
+Import Video File
+Import Subtitle File
+Select Output File
+Synchronize
+Pause
+Stop
+Change Left subtitle file
+Change Right subtitle File
+
+Add panel across he bottom under the two window panes.  This panel should be used for feedback text indicating progress during the process.
+
+
+i can now independently any subtitle into any of these windows.  
+Now i want to be able to assign a file on the right to be my given "whisper" file using a new button in the ribbon called "Assign as whisper file"  this will then allow sync to compare the subtitle loaded in left pane to be synchronized with the one in the right pane
