@@ -1,0 +1,16 @@
+issues to fix before moving on with roadmap:
+
+include technical doc in menu under help - embed it in your app as a “Developer Reference” tab or menu
+include application overview under help
+
+create ribbon under menu and add basic ribbon buttons for:
+Import Video File
+Import Subtitle File
+Select Output File
+Synchronize
+Pause
+Stop
+Change Left subtitle file
+Change Right subtitle File
+
+Add panel across he bottom under the two window panes.  This panel should be used for feedback text indicating progress during the process.
