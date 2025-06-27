@@ -5,12 +5,12 @@ import tempfile
 import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
+
 import ffmpeg  # type: ignore
 from faster_whisper import WhisperModel  # type: ignore
-from version import __versionMinor__   # type: ignore
-from theme import RIBBON_BUTTON_STYLE
 
-__version__ = __versionMinor__  + "05"
+from version import __version__  # type: ignore
+
 
 # ─── ToolTip ────────────────────────────────────────────────────────────────
 class ToolTip:
@@ -128,12 +128,13 @@ class SubtitleSyncApp:
             ("Synchronize", self.start_process),
             ("Pause", self.toggle_pause),
             ("Stop", self.trigger_stop),
-            ("Change Left subtitle", self.select_subtitle),  # placeholder
+            ("Change Left subtitle", self.select_subtitle),  # temporary
             ("Change Right subtitle", lambda: self.load_subtitle_to_right_pane(self.output_path.get()))
         ]
 
         for label, command in btns:
-            tk.Button(ribbon, text=label, command=command, **RIBBON_BUTTON_STYLE).pack(side="left", padx=2, pady=2)
+            b = tk.Button(ribbon, text=label, command=command, font=("Segoe UI", 8))
+            b.pack(side="left", padx=2, pady=2)
 
     def create_feedback_panel(self):
         self.feedback_frame = tk.Frame(self.root, bg="#f8f8f8", bd=1, relief="sunken")
@@ -177,7 +178,6 @@ class SubtitleSyncApp:
         scrollbar = ttk.Scrollbar(doc_window, command=text_widget.yview)
         text_widget.config(yscrollcommand=scrollbar.set)
         scrollbar.pack(side="right", fill="y")
-
     def create_widgets(self):
         # ─── Subtitle Viewer Frames ───────────────────────────────
         pane_frame = tk.Frame(self.root)

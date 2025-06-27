@@ -7,10 +7,9 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import ffmpeg  # type: ignore
 from faster_whisper import WhisperModel  # type: ignore
-from version import __versionMinor__   # type: ignore
+from version import __version__  # type: ignore
 from theme import RIBBON_BUTTON_STYLE
 
-__version__ = __versionMinor__  + "05"
 
 # ─── ToolTip ────────────────────────────────────────────────────────────────
 class ToolTip:
@@ -299,38 +298,38 @@ class SubtitleSyncApp:
             self.video_path.set(path)
         self.update_status_bar()
 
-    def select_subtitle(self):
-        path = filedialog.askopenfilename(filetypes=[("Subtitle files", "*.srt")])
-        if path:
-            self.subtitle_path.set(path)
-            self.load_subtitle_to_left_pane(path)
-        self.update_status_bar()
+        def select_subtitle(self):
+            path = filedialog.askopenfilename(filetypes=[("Subtitle files", "*.srt")])
+            if path:
+                self.subtitle_path.set(path)
+                self.load_subtitle_to_left_pane(path)
+            self.update_status_bar()
 
-    def load_subtitle_to_left_pane(self, path):
-        import re
-        self.left_tree.delete(*self.left_tree.get_children())
+        def load_subtitle_to_left_pane(self, path):
+            import re
+            self.left_tree.delete(*self.left_tree.get_children())
 
-        try:
-            with open(path, "r", encoding="utf-8") as f:
-                lines = f.read().splitlines()
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to load subtitle:\n{e}")
-            return
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    lines = f.read().splitlines()
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to load subtitle:\n{e}")
+                return
 
-        i = 0
-        while i < len(lines):
-            if lines[i].isdigit():
-                index = lines[i]
-                timestamp = lines[i + 1] if i + 1 < len(lines) else ""
-                text_lines = []
-                j = i + 2
-                while j < len(lines) and lines[j].strip():
-                    text_lines.append(lines[j])
-                    j += 1
-                self.left_tree.insert("", "end", values=(index, timestamp, " ".join(text_lines)))
-                i = j + 1
-            else:
-                i += 1
+            i = 0
+            while i < len(lines):
+                if lines[i].isdigit():
+                    index = lines[i]
+                    timestamp = lines[i + 1] if i + 1 < len(lines) else ""
+                    text_lines = []
+                    j = i + 2
+                    while j < len(lines) and lines[j].strip():
+                        text_lines.append(lines[j])
+                        j += 1
+                    self.left_tree.insert("", "end", values=(index, timestamp, " ".join(text_lines)))
+                    i = j + 1
+                else:
+                    i += 1
 
     def load_subtitle_to_right_pane(self, path):
         self.right_tree.delete(*self.right_tree.get_children())
