@@ -16,5 +16,27 @@ Change Right subtitle File
 Add panel across he bottom under the two window panes.  This panel should be used for feedback text indicating progress during the process.
 
 
-i can now independently any subtitle into any of these windows.  
-Now i want to be able to assign a file on the right to be my given "whisper" file using a new button in the ribbon called "Assign as whisper file"  this will then allow sync to compare the subtitle loaded in left pane to be synchronized with the one in the right pane
+i can now independently load any subtitle into any of these windows.
+  
+Now i want to be able to assign a file on the right to be my given "whisper" file that will be synced with the original on the left
+
+  (I am not sure if this already happens as the file is loaded on the right - it should actually just happen automatically .  if it already happens, no button required)
+maybe add something in the label to indicate that the file selected on right is a whisper file (future or existing), on left is original subtitle? (future is when it is generated using whisper, exisitng is a preloaded file using the righ subttle button)
+
+we might be better off renaming Left subtitle to "orignal subtitle", and Right subtitle to "ASR generated" (automatic speech recognition) file
+  
+then also add a "Sync without whisper" button in the ribbon
+
+this will then allow sync to compare the subtitle loaded in left pane to be synchronized with the one in the right pane without performing a new whisper session on the video file. 
+
+so we will have the current sync button, which really does whisper and sync all the way to the end, and a sync only option that uses existing file created earlier.  (eventually, i will want to be able to edit whisper files that were previously created and manually edit some lines in that either files before syncing)
+
+
+So to be totally clear:
+What run_sync() wrote to disk was 100% generated ASR subtitles, structured in .srt format, without using the original subtitle file at all (yet).
+Your new sync logic will be what compares the Whisper output (right pane) to the original subtitle (left pane) and writes the final matched or adjusted version.
+Let me know if you'd like a visual side-by-side comparison preview next — e.g. original vs. ASR with confidence scores or fuzzy similarity — because we can totally build that in. 
+
+
+
+
