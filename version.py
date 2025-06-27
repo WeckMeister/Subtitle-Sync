@@ -1,1 +1,1 @@
-__versionMinor__ = "1.7."
+__versionMinor__ = "1.8."

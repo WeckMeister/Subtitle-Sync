@@ -38,5 +38,5 @@ Your new sync logic will be what compares the Whisper output (right pane) to the
 Let me know if you'd like a visual side-by-side comparison preview next — e.g. original vs. ASR with confidence scores or fuzzy similarity — because we can totally build that in. 
 
 
-
+You could even toss in a fuzzy match rating if you’re feeling ambitious later. Want help making this work for drag-and-drop or batch file selections too? You’re rounding out a power-user’s dream. 📂⏱️
 
