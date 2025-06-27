@@ -787,7 +787,6 @@ class SubtitleSyncApp:
 
     def merge_subtitles(self, original_lines, asr_lines):
         from datetime import datetime
-        import re
 
         def to_seconds(ts):
             try:
@@ -797,75 +796,70 @@ class SubtitleSyncApp:
                 return None
 
         def is_comment(text):
-            return bool(re.fullmatch(r"\[.*?\]", text.strip()))
+            return text.strip().startswith("[") and text.strip().endswith("]")
 
         original_blocks = self.parse_srt_blocks(original_lines)
         asr_blocks = self.parse_srt_blocks(asr_lines)
-        asr_chunks = self.chunk_asr_blocks(
-            asr_blocks,
-            chunk_size=self.chunk_size.get(),
-            step=self.chunk_step.get()
-        )
-
         threshold = self.match_threshold.get()
-        merge_comments = self.merge_comments.get()
+
         result = []
         index = 1
-        matched_count = 0
+        matched = 0
 
         for orig in original_blocks:
             orig_text = orig["text"].strip()
             orig_time = to_seconds(orig["start"])
-            orig_is_comment = is_comment(orig_text)
 
-            if not orig_text or orig_time is None:
+            if not orig_text:
                 continue
 
-            best_score = 0.0
-            best_match = None
+            # Comments are preserved as-is
+            if is_comment(orig_text):
+                result.extend([
+                    f"{index}",
+                    f"{orig['start']} --> {orig['end']}",
+                    orig_text,
+                    ""
+                ])
+                index += 1
+                continue
 
-            for chunk in asr_chunks:
-                chunk_time = to_seconds(chunk["start"])
-                if abs(chunk_time - orig_time) <= threshold:
-                    score = self.token_match_score(orig_text, chunk["text"])
-                    if score > best_score:
-                        best_score = score
-                        best_match = chunk
+            # Find closest ASR block by timestamp
+            best = None
+            best_diff = float("inf")
 
-            # Fallback: nearest timestamp ASR block
-            fallback_block = min(
-                asr_blocks,
-                key=lambda b: abs(to_seconds(b["start"]) - orig_time)
-                if to_seconds(b["start"]) is not None else float("inf")
-            )
-            fallback_text = fallback_block["text"].strip()
-            fallback_start = fallback_block["start"]
-            fallback_end = fallback_block["end"]
+            for asr in asr_blocks:
+                asr_time = to_seconds(asr["start"])
+                if asr_time is None or orig_time is None:
+                    continue
+                diff = abs(asr_time - orig_time)
+                if diff < best_diff and diff <= threshold:
+                    best_diff = diff
+                    best = asr
 
-            # Decide what to use
-            final_text = best_match["text"].strip() if best_match else fallback_text
-            final_start = best_match["start"] if best_match else fallback_start
-            final_end = best_match["end"] if best_match else fallback_end
+            if best:
+                result.extend([
+                    f"{index}",
+                    f"{best['start']} --> {best['end']}",
+                    orig_text,
+                    ""
+                ])
+                matched += 1
+            else:
+                # No match found, keep original timing
+                result.extend([
+                    f"{index}",
+                    f"{orig['start']} --> {orig['end']}",
+                    orig_text,
+                    ""
+                ])
 
-            # Inject comment if needed
-            if merge_comments and orig_is_comment:
-                final_text = f"{orig_text}\n{final_text}"
-
-            result.extend([
-                f"{index}",
-                f"{final_start} --> {final_end}",
-                final_text,
-                ""
-            ])
-            matched_count += 1
             index += 1
 
         self.feedback_label.config(
-            text=f"🔗 Hybrid match complete: {matched_count} subtitles aligned"
+            text=f"🔗 Realignment complete: {matched}/{len(original_blocks)} lines retimed"
         )
         return [line + "\n" for line in result]
-
-    def parse_srt_blocks(self, lines):
 
         blocks = []
         block = {"index": "", "start": "", "end": "", "text": ""}
