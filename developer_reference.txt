@@ -1,0 +1,79 @@
+_______________________________________
+🧠 Subtitle Synchroniser – Technical Summary (v1.5.15)
+🔧 Purpose
+A Python-based GUI application designed to align subtitles with video/audio using the faster-whisper transcription model and display synchronized output in real time. Includes interactive controls, status management, and future support for advanced editing and manual sync workflows.
+________________________________________
+🏗️ Core Architecture
+Main Class
+SubtitleSyncApp(tk.Tk)
+Encapsulates the full application logic, UI setup, threading, file handling, and synchronization mechanics.
+Key Dependencies
+•	tkinter for UI
+•	ffmpeg-python for audio extraction
+•	faster-whisper for transcription
+•	wave, threading, os, time for system and audio management
+________________________________________
+🪟 GUI Structure
+Top Menu Bar
+•	Select Components: Load video, subtitle, export paths
+•	Settings: Adjust flush preview frequency and whisper beam size
+Main Grid
+•	Left Pane: Original subtitle TreeView
+•	Right Pane: Whisper or synced output TreeView
+•	Timestamp Label: Shows last update from Whisper preview
+•	Status Bar: Colored status with beam size and component readiness
+•	Progress Bar: Displays transcription progress
+•	Status Label: Descriptive task updates (e.g. “Transcribing 30%”)
+Control Row
+•	Pause Button: Temporarily halts Whisper loop
+•	📡 Live Button: Toggles auto-scroll on the right pane
+•	Stop Button: Aborts ongoing transcription
+•	Start Sync Button: Triggers the full pipeline (enabled only when all paths are set)
+________________________________________
+🔄 Event Handling & Threads
+•	File selectors update status and enable the Start Sync button only when all paths are selected.
+•	Transcription runs in a background thread, writes live .srt output, and updates the right pane on every preview flush using self.root.after(...).
+________________________________________
+📡 Live Scroll Toggle
+•	Controlled via self.live_scroll_enabled
+•	Clicking button toggles between: 
+o	"📡 Live" (auto-scroll enabled)
+o	"📴 Manual" (auto-scroll paused by user)
+•	Updates button text and style using .config(...)
+________________________________________
+🔁 Transcription Loop Behavior
+•	Extracts audio from video using FFmpeg.
+•	Transcribes in real time with faster-whisper, flushing: 
+o	preview_buffer → for intermediate display
+o	whisper_buffer → for Whisper output .srt file
+•	Right TreeView updates via scheduled main thread calls.
+________________________________________
+🟢 Status & Readiness Indicators
+•	Component readiness shows via [✓] and [✗] labels and tooltips.
+•	Status bar background toggles: 
+o	Pale green (#d0ffd0) when all components are ready
+o	Light pink (#ffe4e1) during idle or incomplete state
+________________________________________
+✨ UI Enhancements
+•	Start Sync Button Pulse: When all paths are ready, it pulses between two greens to signal interactivity.
+•	Dynamic tooltips: File tooltips show full path or placeholder (“No video selected”)
+•	Relief toggling: Live button changes depth based on active/inactive state
+________________________________________
+🧩 Key Internal Flags
+Variable	Purpose
+self.pause_flag	Indicates pause status during sync
+self.stop_flag	Triggers graceful interruption
+self.auto_scroll_right	Controls TreeView auto-scroll
+self.live_scroll_enabled	Tracks live button state
+________________________________________
+🌱 Planned V2 Features (as outlined)
+•	File Properties menu (video/subtitle metadata via FFmpeg and stat)
+•	Filter and extract TV episode info from filenames
+•	Manual sync using previously generated Whisper + subtitle
+•	In-pane editing of subtitle lines
+•	Show/hide Whisper/final output in either pane
+•	Filter selections for matching series/episode across folders
+•	Session persistence and cleaner modular workflows
+________________________________________
+Let me know if you'd like this exported as a .txt or .md file — or if you’d prefer it formatted as an inline help menu within the app. We can easily evolve this into real documentation or tooltips for users down the line.
+
