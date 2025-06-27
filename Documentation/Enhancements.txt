@@ -40,3 +40,16 @@ Let me know if you'd like a visual side-by-side comparison preview next — e.g.
 
 You could even toss in a fuzzy match rating if you’re feeling ambitious later. Want help making this work for drag-and-drop or batch file selections too? You’re rounding out a power-user’s dream. 📂⏱️
 
+
+
+the merged result is not what is expected.
+1. there are many duplicated lines wit different timestamps
+2. note that not mall words in original file will be in ASR file and vie versa
+3. the ASR file should be considered as the more accurate file of the two, so where there are differences we need the original file to match the ASR file
+
+
+eventually provide an option to run ASR as one word output
+
+set chunk size as variable in settings
+
+

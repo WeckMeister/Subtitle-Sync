@@ -1,0 +1,305 @@
+Option Explicit
+Const DEBUG_LOGGING As Boolean = True ' Toggle to False to disable logging
+
+Sub SyncSubtitlesFast()
+    Dim wsSentence As Worksheet, wsOneWord As Worksheet, wsOutput As Worksheet
+    Dim sentenceArray() As String, timestampArray() As String, timestampSecs() As Double
+    Dim lastRowS As Long, lastRowW As Long
+    Dim outRow As Long, i As Long
+    Dim sentence As String, sentenceTime As String
+    Dim bestScore As Double, bestMatchTime As String
+    Dim matchScores() As Double
+    Dim weakCount As Long, totalScore As Double, maxScore As Double, minScore As Double
+
+    Set wsSentence = ThisWorkbook.Sheets("Sentence")
+    Set wsOneWord = ThisWorkbook.Sheets("oneword")
+    Set wsOutput = ThisWorkbook.Sheets("Output")
+    wsOutput.Activate
+    wsOutput.Cells.ClearContents
+        ' Clear all three sheets
+    ThisWorkbook.Sheets("Sentence").Cells.ClearContents
+    ThisWorkbook.Sheets("oneword").Cells.ClearContents
+    ThisWorkbook.Sheets("Output").Cells.ClearContents
+
+    ' Prompt user to select the Sentence SRT file
+    Dim sentenceFilePath As String
+    sentenceFilePath = Application.GetOpenFilename("SRT Files (*.srt), *.srt", , "Select Sentence .srt File")
+    If sentenceFilePath = "False" Then Exit Sub
+
+   ' Prompt for oneword file
+    Dim onewordFilePath As String
+    onewordFilePath = Application.GetOpenFilename("SRT Files (*.srt), *.srt", , "Select Oneword .srt File")
+    If onewordFilePath = "False" Then Exit Sub
+
+    ' Load contents into Sentence sheet
+    
+    LoadSRTToSheet sentenceFilePath, wsSentence
+    LoadSRTToSheet onewordFilePath, wsOneWord
+
+    ' Suggest output path based on sentence file
+    Dim saveFolder As String, baseName As String, outputFilePath As String
+    saveFolder = Left(sentenceFilePath, InStrRev(sentenceFilePath, "\"))
+    baseName = Mid(sentenceFilePath, InStrRev(sentenceFilePath, "\") + 1)
+    If LCase(Right(baseName, 4)) = ".srt" Then baseName = Left(baseName, Len(baseName) - 4)
+    outputFilePath = saveFolder & baseName & ".SYNCED.srt"
+    
+    Dim path As String
+    
+    'path = outputFilePath
+    path = Application.GetSaveAsFilename(outputFilePath, "SRT Files (*.srt), *.srt")
+    If path = "False" Then Exit Sub
+    If Right(path, 4) <> ".srt" Then path = path & ".srt"
+
+    lastRowS = 5000 ' Can be adjusted or capped as needed
+    lastRowW = 5000
+    ReDim sentenceArray(1 To lastRowW)
+    ReDim timestampArray(1 To lastRowW)
+    ReDim timestampSecs(1 To lastRowW)
+    ReDim matchScores(1 To lastRowS)
+
+    maxScore = 0: minScore = 1
+    outRow = 1
+
+    ' Preprocess transcript chunks
+    Dim chunkSize As Integer: chunkSize = 8
+    Dim chunkCount As Long: chunkCount = lastRowW - chunkSize
+    Dim w As Long, c As Long
+
+    For w = 1 To chunkCount
+        Dim chunk As String: chunk = ""
+        For c = 0 To chunkSize - 1
+            If Not IsError(wsOneWord.Cells(w + c, 1).Value) Then
+                chunk = chunk & " " & CStr(wsOneWord.Cells(w + c, 1).Value)
+            End If
+        Next c
+        sentenceArray(w) = CleanSentence(chunk)
+        timestampArray(w) = wsOneWord.Cells(w, 2).Value
+        timestampSecs(w) = TimeStampToSeconds(timestampArray(w))
+
+        If w Mod 50 = 0 Or w = chunkCount Then
+            Application.StatusBar = "Preprocessing chunks: " & Format(w / chunkCount, "0%")
+            DoEvents
+        End If
+    Next w
+
+    ' Match loop
+    For i = 1 To lastRowS
+        sentence = wsSentence.Cells(i, 1).Value
+        sentenceTime = ExtractTimestamp(wsSentence, i)
+
+        If sentence <> "" And sentenceTime <> "" Then
+            bestScore = 0: bestMatchTime = ""
+            Dim cleanedSentence As String: cleanedSentence = CleanSentence(sentence)
+            Dim sentenceTimeSec As Double: sentenceTimeSec = TimeStampToSeconds(sentenceTime)
+
+            ' Rolling window match
+            Dim winSize As Long: winSize = 500
+            Dim stepSize As Long: stepSize = 250
+            Dim winStart As Long, winEnd As Long
+            Dim j As Long
+
+            For winStart = 1 To chunkCount Step stepSize
+                winEnd = Application.Min(winStart + winSize - 1, chunkCount)
+                For j = winStart To winEnd
+                    If Abs(timestampSecs(j) - sentenceTimeSec) <= 6 Then
+                        Dim score As Double
+                        score = TokenMatchScore(cleanedSentence, sentenceArray(j))
+                        If score > bestScore Then
+                            bestScore = score
+                            bestMatchTime = timestampArray(j)
+                        End If
+                    End If
+                Next j
+            Next winStart
+
+            ' Output and stats
+            wsOutput.Cells(outRow, 1).Value = sentenceTime
+            wsOutput.Cells(outRow, 2).Value = sentence
+            wsOutput.Cells(outRow, 3).Value = bestMatchTime
+            wsOutput.Cells(outRow, 4).Value = Format(bestScore, "0.00")
+            wsOutput.Cells(outRow, 9).Value = bestScore
+
+            If bestScore < 0.5 Then
+                wsOutput.Cells(outRow, 4).Interior.Color = RGB(255, 204, 204)
+                wsOutput.Cells(outRow, 5).Value = "Weak match"
+                weakCount = weakCount + 1
+            End If
+
+            matchScores(i) = bestScore
+            totalScore = totalScore + bestScore
+            If bestScore > maxScore Then maxScore = bestScore
+            If bestScore < minScore Then minScore = bestScore
+
+            With wsOutput
+                .Cells(1, 8).Value = "?? Dashboard"
+                .Cells(2, 8).Value = "Processed: " & i
+                .Cells(3, 8).Value = "Weak Matches: " & weakCount & " / " & i & " (" & Format(weakCount / i, "0%") & ")"
+                .Cells(4, 8).Value = "Avg Score: " & Format(totalScore / i, "0.00")
+                .Cells(5, 8).Value = "Min/Max: " & Format(minScore, "0.00") & " / " & Format(maxScore, "0.00")
+            End With
+
+            If i = 1 Then
+                Dim chtObj As ChartObject
+                Set chtObj = wsOutput.ChartObjects.Add(Left:=400, width:=500, Top:=10, height:=250)
+                With chtObj.Chart
+                    .ChartType = xlLine
+                    .SetSourceData Source:=wsOutput.Range("I2:I2")
+                    .HasTitle = True
+                    .ChartTitle.Text = "Running Match Score"
+                    .Axes(xlValue).MinimumScale = 0
+                    .Axes(xlValue).MaximumScale = 1
+                End With
+            ElseIf wsOutput.ChartObjects.Count > 0 Then
+                wsOutput.ChartObjects(1).Chart.SetSourceData Source:=wsOutput.Range("I2:I" & outRow)
+            End If
+
+            If outRow Mod 10 = 0 And path <> "False" Then
+                SaveOutputAsRTS wsOutput, path
+            End If
+
+            outRow = outRow + 1
+        End If
+
+        DoEvents
+    Next i
+
+    ResetStatusBar
+    If path <> "" Then SaveOutputAsRTS wsOutput, path
+    MsgBox "Subtitle synchronisation complete.", vbInformation
+End Sub
+
+Private Function TokenMatchScore(a As String, b As String) As Double
+    Dim wordsA() As String, wordsB() As String, word As Variant
+    Dim dict As Object: Set dict = CreateObject("Scripting.Dictionary")
+    Dim intersect As Long, total As Long
+
+    If Len(Trim(a)) = 0 Or Len(Trim(b)) = 0 Then
+        TokenMatchScore = 0
+        Exit Function
+    End If
+
+    wordsA = Split(LCase(Trim(a)))
+    wordsB = Split(LCase(Trim(b)))
+
+    For Each word In wordsB
+        If Not dict.exists(word) Then dict.Add word, 1
+    Next word
+
+    For Each word In wordsA
+        If dict.exists(word) Then intersect = intersect + 1
+    Next word
+
+    total = UBound(wordsA) + 1
+    TokenMatchScore = intersect / total
+End Function
+
+Private Function ExtractTimestamp(ws As Worksheet, rowIdx As Long) As String
+    Dim i As Long
+    For i = Application.Max(1, rowIdx - 2) To rowIdx
+        If InStr(ws.Cells(i, 1).Value, "-->") > 0 Then
+            ExtractTimestamp = ws.Cells(i, 1).Value
+            Exit Function
+        End If
+    Next i
+
+    Dim wsOut As Worksheet: Set wsOut = ThisWorkbook.Sheets("Output")
+    Dim logRow As Long: logRow = wsOut.Cells(wsOut.rowS.Count, 6).End(xlUp).Row + 1
+    wsOut.Cells(logRow, 6).Value = "No timestamp found for row " & rowIdx & ": """ & ws.Cells(rowIdx, 1).Value & """"
+
+    ExtractTimestamp = ""
+End Function
+
+Private Function CleanSentence(ByVal txt As String) As String
+    Dim i As Long, ch As String * 1, cleaned As String
+    cleaned = ""
+
+    For i = 1 To Len(txt)
+        ch = Mid$(txt, i, 1)
+        If AscW(ch) >= 32 And AscW(ch) <= 126 Then
+            If ch Like "[A-Za-z0-9 ]" Then
+                cleaned = cleaned & ch
+            End If
+        End If
+    Next i
+
+    cleaned = Trim(cleaned)
+    Do While InStr(cleaned, "  ") > 0
+        cleaned = Replace(cleaned, "  ", " ")
+    Loop
+
+    CleanSentence = cleaned
+End Function
+
+Private Sub ShowProgressFast(i As Long, total As Long, sentence As String)
+    Dim percent As String
+    percent = Format(i / total, "0%")
+    Application.StatusBar = "Syncing: " & percent & " — Row " & i & "/" & total & _
+                            " — """ & Left(sentence, 60) & """"
+    DoEvents
+End Sub
+
+Private Sub ResetStatusBar()
+    Application.StatusBar = False
+End Sub
+
+Private Sub SaveOutputAsRTS(ws As Worksheet, path As String)
+    Dim i As Long, lastRow As Long
+    Dim fileNum As Integer: fileNum = FreeFile
+
+    lastRow = ws.Cells(ws.rowS.Count, 1).End(xlUp).Row
+    Open path For Output As #fileNum
+
+    For i = 1 To lastRow
+        Dim stamp As String: stamp = ws.Cells(i, 1).Value
+        Dim line As String: line = ws.Cells(i, 2).Value
+        
+        If Len(Trim(line)) > 0 And InStr(line, "-->") = 0 Then
+            Print #fileNum, i
+            Print #fileNum, stamp
+            Print #fileNum, line
+            Print #fileNum, ""
+        End If
+    Next i
+    
+    Close #fileNum
+End Sub
+
+Private Function TimeStampToSeconds(ByVal stamp As String) As Double
+    On Error Resume Next
+    Dim h As Long, m As Long, s As Double
+    Dim tParts() As String, secParts() As String
+
+    stamp = Trim(Split(stamp, "-->")(0)) ' Get start time only
+    stamp = Replace(stamp, ",", ".")
+    tParts = Split(stamp, ":")
+
+    If UBound(tParts) = 2 Then
+        secParts = Split(tParts(2), ".")
+        h = CLng(tParts(0))
+        m = CLng(tParts(1))
+        s = CDbl(secParts(0)) + Val("0." & secParts(1))
+        TimeStampToSeconds = h * 3600 + m * 60 + s
+    End If
+End Function
+Private Sub LoadSRTToSheet(ByVal filePath As String, ByVal targetSheet As Worksheet)
+    Dim fileNum As Integer: fileNum = FreeFile
+    Dim entireFile As String
+    Dim lines() As String
+    Dim i As Long
+
+    ' Read entire file as text
+    Open filePath For Binary As #fileNum
+        entireFile = Space$(LOF(fileNum))
+        Get #fileNum, , entireFile
+    Close #fileNum
+
+    ' Normalize line endings and split
+    entireFile = Replace(entireFile, vbCrLf, vbLf)
+    entireFile = Replace(entireFile, vbCr, vbLf)
+    lines = Split(entireFile, vbLf)
+
+    ' Write to sheet line by line
+    For i = 0 To UBound(lines)
+        targetSheet.Cells(i + 1, 1).Value = lines(i)
+    Next i
+End Sub

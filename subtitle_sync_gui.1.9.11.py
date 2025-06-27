@@ -12,7 +12,7 @@ from theme import RIBBON_BUTTON_STYLE
 import os
 icon_path = os.path.join("icons", "import_video.png")
 
-__version__ = __versionMinor__  + "09"
+__version__ = __versionMinor__  + "11"
 
 def load_icon(name, mode="light"):
     fname = f"{name}{'_dark' if mode == 'dark' else ''}.png"
@@ -770,7 +770,7 @@ class SubtitleSyncApp:
 
     def merge_subtitles(self, original_lines, asr_lines):
         from datetime import datetime
-        import difflib
+        import re
 
         def to_seconds(ts):
             try:
@@ -779,55 +779,69 @@ class SubtitleSyncApp:
             except:
                 return None
 
+        def is_comment(text):
+            return bool(re.fullmatch(r"\[.*?\]", text.strip()))
+
         original_blocks = self.parse_srt_blocks(original_lines)
         asr_blocks = self.parse_srt_blocks(asr_lines)
+        asr_chunks = self.chunk_asr_blocks(asr_blocks, chunk_size=8, step=2)
 
         threshold = self.match_threshold.get()
+        merge_comments = self.merge_comments.get()
         result = []
+        index = 1
         matched_count = 0
 
-        for index, orig in enumerate(original_blocks, 1):
-            orig_start = to_seconds(orig["start"])
-            best = None
-            smallest_diff = float("inf")
+        for orig in original_blocks:
+            orig_text = orig["text"].strip()
+            orig_time = to_seconds(orig["start"])
+            orig_is_comment = is_comment(orig_text)
 
-            for asr in asr_blocks:
-                asr_start = to_seconds(asr["start"])
-                if orig_start is None or asr_start is None:
-                    continue
+            if not orig_text or orig_time is None:
+                continue
 
-                diff = abs(orig_start - asr_start)
-                if diff < smallest_diff and diff <= threshold:
-                    smallest_diff = diff
-                    best = asr
+            best_score = 0.0
+            best_match = None
 
-            if not best and asr_blocks:
-                similarities = [
-                    (difflib.SequenceMatcher(None, orig["text"], b["text"]).ratio(), b)
-                    for b in asr_blocks
-                ]
-                best = max(similarities, key=lambda x: x[0])[1] if similarities else None
+            for chunk in asr_chunks:
+                chunk_time = to_seconds(chunk["start"])
+                if abs(chunk_time - orig_time) <= threshold:
+                    score = self.token_match_score(orig_text, chunk["text"])
+                    if score > best_score:
+                        best_score = score
+                        best_match = chunk
 
-            if best:
-                result.extend([
-                    f"{index}",
-                    f"{orig['start']} --> {orig['end']}",
-                    best["text"].strip(),
-                    ""
-                ])
-                matched_count += 1
-            else:
-                result.extend([
-                    f"{index}",
-                    f"{orig['start']} --> {orig['end']}",
-                    "(No match found)",
-                    ""
-                ])
+            # Fallback: nearest timestamp ASR block
+            fallback_block = min(
+                asr_blocks,
+                key=lambda b: abs(to_seconds(b["start"]) - orig_time)
+                if to_seconds(b["start"]) is not None else float("inf")
+            )
+            fallback_text = fallback_block["text"].strip()
+            fallback_start = fallback_block["start"]
+            fallback_end = fallback_block["end"]
+
+            # Decide what to use
+            final_text = best_match["text"].strip() if best_match else fallback_text
+            final_start = best_match["start"] if best_match else fallback_start
+            final_end = best_match["end"] if best_match else fallback_end
+
+            # Inject comment if needed
+            if merge_comments and orig_is_comment:
+                final_text = f"{orig_text}\n{final_text}"
+
+            result.extend([
+                f"{index}",
+                f"{final_start} --> {final_end}",
+                final_text,
+                ""
+            ])
+            matched_count += 1
+            index += 1
 
         self.feedback_label.config(
-            text=f"🔗 Sync complete: {matched_count}/{len(original_blocks)} lines matched"
+            text=f"🔗 Hybrid match complete: {matched_count} subtitles aligned"
         )
-
         return [line + "\n" for line in result]
 
     def parse_srt_blocks(self, lines):
@@ -915,9 +929,27 @@ class SubtitleSyncApp:
         except tk.TclError:
             print(f"⚠️ Warning: could not load {path}")
             return None   
-
+        
+    def token_match_score(self, original, candidate):
+        if not original or not candidate:
+            return 0.0
+        a_words = set(original.lower().split())
+        b_words = set(candidate.lower().split())
+        shared = a_words & b_words
+        return len(shared) / max(len(a_words), 1)
  
-         
+    def chunk_asr_blocks(self, asr_blocks, chunk_size=8, step=2):
+        chunks = []
+        for block in asr_blocks:
+            words = block["text"].split()
+            for i in range(0, len(words) - chunk_size + 1, step):
+                chunk = " ".join(words[i:i + chunk_size])
+                chunks.append({
+                    "text": chunk,
+                    "start": block["start"],
+                    "end": block["end"]
+                })
+        return chunks    
   
 
 if __name__ == "__main__":

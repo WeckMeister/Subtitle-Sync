@@ -12,7 +12,7 @@ from theme import RIBBON_BUTTON_STYLE
 import os
 icon_path = os.path.join("icons", "import_video.png")
 
-__version__ = __versionMinor__  + "09"
+__version__ = __versionMinor__  + "10"
 
 def load_icon(name, mode="light"):
     fname = f"{name}{'_dark' if mode == 'dark' else ''}.png"
@@ -770,7 +770,7 @@ class SubtitleSyncApp:
 
     def merge_subtitles(self, original_lines, asr_lines):
         from datetime import datetime
-        import difflib
+        import re
 
         def to_seconds(ts):
             try:
@@ -779,55 +779,49 @@ class SubtitleSyncApp:
             except:
                 return None
 
+        def is_comment(text):
+            return bool(re.fullmatch(r"\[.*?\]", text.strip()))
+
         original_blocks = self.parse_srt_blocks(original_lines)
         asr_blocks = self.parse_srt_blocks(asr_lines)
-
         threshold = self.match_threshold.get()
+        merge_comments = self.merge_comments.get()
+
         result = []
+        index = 1
         matched_count = 0
 
-        for index, orig in enumerate(original_blocks, 1):
-            orig_start = to_seconds(orig["start"])
-            best = None
-            smallest_diff = float("inf")
+        for asr in asr_blocks:
+            asr_start = to_seconds(asr["start"])
+            asr_end = to_seconds(asr["end"])
+            merged_text = asr["text"].strip()
 
-            for asr in asr_blocks:
-                asr_start = to_seconds(asr["start"])
-                if orig_start is None or asr_start is None:
-                    continue
+            if merge_comments:
+                # Inject comments from overlapping original blocks
+                for orig in original_blocks:
+                    if is_comment(orig["text"]):
+                        orig_start = to_seconds(orig["start"])
+                        orig_end = to_seconds(orig["end"])
+                        if (
+                            orig_start is not None
+                            and orig_end is not None
+                            and orig_end >= asr_start
+                            and orig_start <= asr_end
+                        ):
+                            merged_text = f"{orig['text'].strip()}\n{merged_text}"
 
-                diff = abs(orig_start - asr_start)
-                if diff < smallest_diff and diff <= threshold:
-                    smallest_diff = diff
-                    best = asr
-
-            if not best and asr_blocks:
-                similarities = [
-                    (difflib.SequenceMatcher(None, orig["text"], b["text"]).ratio(), b)
-                    for b in asr_blocks
-                ]
-                best = max(similarities, key=lambda x: x[0])[1] if similarities else None
-
-            if best:
-                result.extend([
-                    f"{index}",
-                    f"{orig['start']} --> {orig['end']}",
-                    best["text"].strip(),
-                    ""
-                ])
-                matched_count += 1
-            else:
-                result.extend([
-                    f"{index}",
-                    f"{orig['start']} --> {orig['end']}",
-                    "(No match found)",
-                    ""
-                ])
+            result.extend([
+                f"{index}",
+                f"{asr['start']} --> {asr['end']}",
+                merged_text,
+                ""
+            ])
+            index += 1
+            matched_count += 1
 
         self.feedback_label.config(
-            text=f"🔗 Sync complete: {matched_count}/{len(original_blocks)} lines matched"
+            text=f"🔗 Merged: {matched_count} ASR blocks finalized"
         )
-
         return [line + "\n" for line in result]
 
     def parse_srt_blocks(self, lines):
