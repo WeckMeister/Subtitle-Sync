@@ -52,4 +52,8 @@ eventually provide an option to run ASR as one word output
 
 set chunk size as variable in settings
 
+______________
+
+before starting any sync or asr, after button was pushed inform user what file is being written to and provide cancel button to cancel the process
+
 
