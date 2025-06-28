@@ -1,6 +1,5 @@
-('C:\\Users\\heiko\\OneDrive\\Documents Obsolete\\Documentation\\Programing '
- 'Code (1D)\\Python code\\Subtitle '
- 'Synchronisation\\Subtitle-Sync\\build\\subtitle_sync_gui.1.9.25\\PYZ-00.pyz',
+('C:\\Users\\heiko\\Documentation Heiko\\Programing Code\\Python '
+ 'code\\Subtitle-Sync\\build\\subtitle_sync_gui.1.9.25\\PYZ-00.pyz',
  [('PIL',
    'C:\\Users\\heiko\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PIL\\__init__.py',
    'PYMODULE'),
@@ -6084,8 +6083,8 @@
    'C:\\Users\\heiko\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\textwrap.py',
    'PYMODULE'),
   ('theme',
-   'C:\\Users\\heiko\\OneDrive\\Documents Obsolete\\Documentation\\Programing '
-   'Code (1D)\\Python code\\Subtitle Synchronisation\\Subtitle-Sync\\theme.py',
+   'C:\\Users\\heiko\\Documentation Heiko\\Programing Code\\Python '
+   'code\\Subtitle-Sync\\theme.py',
    'PYMODULE'),
   ('threading',
    'C:\\Users\\heiko\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\threading.py',
@@ -13204,9 +13203,8 @@
    'C:\\Users\\heiko\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\uuid.py',
    'PYMODULE'),
   ('version',
-   'C:\\Users\\heiko\\OneDrive\\Documents Obsolete\\Documentation\\Programing '
-   'Code (1D)\\Python code\\Subtitle '
-   'Synchronisation\\Subtitle-Sync\\version.py',
+   'C:\\Users\\heiko\\Documentation Heiko\\Programing Code\\Python '
+   'code\\Subtitle-Sync\\version.py',
    'PYMODULE'),
   ('wave',
    'C:\\Users\\heiko\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\wave.py',

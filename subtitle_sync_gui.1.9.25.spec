@@ -3,18 +3,17 @@
 from PyInstaller.utils.hooks import collect_submodules, collect_data_files
 import os
 
-# Add hidden modules and data from faster_whisper
+# Collect hidden imports and data for faster_whisper
 hiddenimports = collect_submodules('faster_whisper')
 datas = collect_data_files('faster_whisper')
 
-# Bundle your local Whisper model
+# Add local model and icons
 datas += [
     ('models/whisper-large-v3', 'models/whisper-large-v3'),
     ('icons', 'icons'),
 ]
 
-
-# Bundle ffmpeg binary
+# Add FFmpeg binary
 binaries = [('bin/ffmpeg.exe', 'ffmpeg.exe')]
 
 block_cipher = None
@@ -39,11 +38,12 @@ pyz = PYZ(a.pure)
 exe = EXE(
     pyz,
     a.scripts,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
+    [],  # excluded binaries from EXE; they go to COLLECT
+    [],
+    [],
     [],
     name='subtitle_sync_gui.1.9.25',
+    exclude_binaries=True,
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -56,4 +56,14 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+)
+
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    strip=False,
+    upx=True,
+    name='subtitle_sync_gui.1.9.25',
 )

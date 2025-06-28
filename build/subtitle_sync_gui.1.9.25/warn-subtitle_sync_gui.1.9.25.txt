@@ -69,6 +69,8 @@ missing module named torch.nn.Module - imported by torch.nn (top-level), torch.o
 missing module named dp - imported by torchaudio.pipelines._tts.utils (delayed)
 missing module named kaldi_io - imported by torchaudio.kaldi_io (delayed)
 missing module named av.video._VideoCodecName - imported by av.video (top-level), av.codec.context (top-level), av.container.output (top-level)
+missing module named 'cython.cimports' - imported by av.packet (top-level), av.audio.codeccontext (top-level), av.filter.loudnorm (top-level)
+missing module named cython - imported by av.packet (top-level), av.audio.codeccontext (top-level), av.filter.loudnorm (top-level)
 missing module named av.audio._AudioCodecName - imported by av.audio (top-level), av.codec.context (top-level), av.container.output (top-level)
 missing module named numpy._core.asarray - imported by numpy._core (top-level), numpy.linalg._linalg (top-level), numpy.lib._array_utils_impl (top-level), numpy (conditional), numpy.fft._helper (top-level), numpy.fft._pocketfft (top-level)
 missing module named threadpoolctl - imported by numpy.lib._utils_impl (delayed, optional)

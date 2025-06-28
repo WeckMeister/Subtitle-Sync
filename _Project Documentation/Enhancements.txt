@@ -1,0 +1,59 @@
+issues to fix before moving on with roadmap:
+
+include technical doc in menu under help - embed it in your app as a “Developer Reference” tab or menu
+include application overview under help
+
+create ribbon under menu and add basic ribbon buttons for:
+Import Video File
+Import Subtitle File
+Select Output File
+Synchronize
+Pause
+Stop
+Change Left subtitle file
+Change Right subtitle File
+
+Add panel across he bottom under the two window panes.  This panel should be used for feedback text indicating progress during the process.
+
+
+i can now independently load any subtitle into any of these windows.
+  
+Now i want to be able to assign a file on the right to be my given "whisper" file that will be synced with the original on the left
+
+  (I am not sure if this already happens as the file is loaded on the right - it should actually just happen automatically .  if it already happens, no button required)
+maybe add something in the label to indicate that the file selected on right is a whisper file (future or existing), on left is original subtitle? (future is when it is generated using whisper, exisitng is a preloaded file using the righ subttle button)
+
+we might be better off renaming Left subtitle to "orignal subtitle", and Right subtitle to "ASR generated" (automatic speech recognition) file
+  
+then also add a "Sync without whisper" button in the ribbon
+
+this will then allow sync to compare the subtitle loaded in left pane to be synchronized with the one in the right pane without performing a new whisper session on the video file. 
+
+so we will have the current sync button, which really does whisper and sync all the way to the end, and a sync only option that uses existing file created earlier.  (eventually, i will want to be able to edit whisper files that were previously created and manually edit some lines in that either files before syncing)
+
+
+So to be totally clear:
+What run_sync() wrote to disk was 100% generated ASR subtitles, structured in .srt format, without using the original subtitle file at all (yet).
+Your new sync logic will be what compares the Whisper output (right pane) to the original subtitle (left pane) and writes the final matched or adjusted version.
+Let me know if you'd like a visual side-by-side comparison preview next — e.g. original vs. ASR with confidence scores or fuzzy similarity — because we can totally build that in. 
+
+
+You could even toss in a fuzzy match rating if you’re feeling ambitious later. Want help making this work for drag-and-drop or batch file selections too? You’re rounding out a power-user’s dream. 📂⏱️
+
+
+
+the merged result is not what is expected.
+1. there are many duplicated lines wit different timestamps
+2. note that not mall words in original file will be in ASR file and vie versa
+3. the ASR file should be considered as the more accurate file of the two, so where there are differences we need the original file to match the ASR file
+
+
+eventually provide an option to run ASR as one word output
+
+set chunk size as variable in settings
+
+______________
+
+before starting any sync or asr, after button was pushed inform user what file is being written to and provide cancel button to cancel the process
+
+
