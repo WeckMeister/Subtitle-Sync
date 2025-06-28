@@ -1,4 +1,4 @@
-app_version = "1.9.28"
+app_version = "1.9.32"
 
 # -*- mode: python ; coding: utf-8 -*-
 

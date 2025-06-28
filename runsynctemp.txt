@@ -1,0 +1,164 @@
+def run_sync(self):
+        import time
+        t0 = time.time()
+
+        ffmpeg_path = resource_path(os.path.join("bin", "ffmpeg.exe"))
+        if not os.path.exists(ffmpeg_path):
+            raise FileNotFoundError(f"ffmpeg.exe not found at: {ffmpeg_path}")
+        
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_audio:
+            audio_path = temp_audio.name
+
+        ffmpeg.input(self.video_path.get()).output(
+            audio_path,
+            format='wav',
+            acodec='pcm_s16le',
+            ac=1,
+            ar='16000'
+        ).run(cmd=ffmpeg_path, overwrite_output=True)
+
+        t1 = time.time()
+        print(f"[DEBUG] Audio extracted in {t1 - t0:.2f}s", flush=True)
+        
+
+        self.feedback_label.config(text="💬 Running Faster-Whisper transcription...")
+        self.status_label.config(text="Transcribing with Faster-Whisper...")
+        self.progress["value"] = 30
+
+        # model loads:
+        model_path = ensure_model()
+
+        t1 = time.time()
+        print(f"[DEBUG] Audio extracted in {t1 - t0:.2f}s", flush=True)
+        self.log_feedback(f"Audio extracted in {t1 - t0:.2f}s")
+
+        model = WhisperModel(model_path, compute_type="int8")
+        
+        # after model loaded:
+        start = time.time()
+
+        print(f"[DEBUG] Starting transcription...", flush=True)
+        self.log_feedback(f"Starting transcription...")
+
+        t4 = time.time()
+
+        # transcription starts:
+        print("[DEBUG] Calling model.transcribe", flush=True)  ## BEFORE
+        self.log_feedback("Calling model.transcribe")
+        
+        segments_gen, _ = model.transcribe(
+            audio_path,
+            beam_size=self.beam_size.get(),
+            word_timestamps=self.word_level_asr.get()
+        )
+        segments = list(segments_gen)
+
+        #After transcription:
+        t5 = time.time()
+        print(f"[DEBUG] Transcription completed in {t5 - t4:.2f}s", flush=True)
+        self.log_feedback(f"[DEBUG] Transcription completed in {t5 - t4:.2f}s")
+           
+        print(f"[DEBUG] Transcription duration: {time.time() - start:.2f} seconds", flush=True)  ## AFTER
+
+
+        for s in segments[:5]:
+            print(f"▶ Segment: {self.format_timestamp(s.start)} → {self.format_timestamp(s.end)} | {s.text.strip()[:80]}")
+
+        if not segments:
+            self.feedback_label.config(text="⚠️ No speech detected by Whisper.")
+            self.status_label.config(text="Empty result — check audio input", fg="red")
+            return
+
+        transcription_path = self.output_path.get()
+        total_duration = self.get_audio_duration(audio_path)
+
+        self.asr_path = transcription_path
+
+        base_name = os.path.splitext(os.path.basename(self.video_path.get()))[0]
+        beam = self.beam_size.get()
+        tag = f"ASR{beam:02}"
+        if self.word_level_asr.get():
+            tag += "1W"
+
+        preview_path = os.path.join(os.path.dirname(transcription_path), f"{base_name}.preview.srt")
+        whisper_path = os.path.join(os.path.dirname(transcription_path), f"{base_name}.{tag}.srt")
+
+        self.preview_buffer = []
+        self.whisper_buffer = []
+
+        with open(transcription_path, "w", encoding="utf-8") as final_file, \
+            open(preview_path, "w", encoding="utf-8") as preview_file, \
+            open(whisper_path, "w", encoding="utf-8") as whisper_file:
+
+            for i, segment in enumerate(segments):
+                if self.stop_flag.is_set():
+                    self.feedback_label.config(text="⛔️ Transcription stopped by user.")
+                    break
+                while self.pause_flag.is_set():
+                    self.feedback_label.config(text="⏸ Paused…")
+                    time.sleep(0.2)
+
+                text = segment.text.strip()
+                if not text and hasattr(segment, "words") and segment.words:
+                    text = " ".join([w.word for w in segment.words])
+                if not text:
+                    print(f"[WARN] Empty segment {i+1} — skipping or writing placeholder.")
+
+                entry = (
+                    f"{i+1}\n"
+                    f"{self.format_timestamp(segment.start)} --> {self.format_timestamp(segment.end)}\n"
+                    f"{text}\n\n"
+                )
+
+                final_file.write(entry)
+                self.whisper_buffer.append(entry)
+                self.preview_buffer.append(entry)
+
+                if len(self.whisper_buffer) >= self.flush_lines.get():
+                    whisper_file.writelines(self.whisper_buffer)
+                    whisper_file.flush()
+                    self.whisper_buffer.clear()
+
+                if len(self.preview_buffer) >= self.flush_lines.get():
+                    preview_file.writelines(self.preview_buffer)
+                    preview_file.flush()
+                    self.preview_buffer.clear()
+                    now = time.strftime("%H:%M:%S")
+                    self.preview_timestamp.config(text=f"Last updated: {now}")
+                    self.root.after(0, lambda: self.load_subtitle_to_right_pane(preview_path))
+
+                percent = min((segment.end / total_duration) * 100, 100)
+                self.progress["value"] = percent
+                self.status_label.config(text=f"Transcribing… {percent:.1f}%")
+                self.feedback_label.config(text=f"💬 Whisper processing: {percent:.1f}%")
+                self.root.update_idletasks()
+
+        #after subtitle writing loop:
+        t6 = time.time()
+        print(f"[DEBUG] Subtitle writing complete in {t6 - t5:.2f}s", flush=True)
+
+        if os.path.exists(audio_path):
+            os.remove(audio_path)
+
+        if os.path.exists(preview_path):
+            try:
+                os.remove(preview_path)
+            except Exception as e:
+                print(f"Could not delete preview file: {e}")
+
+        self.status_label.config(
+            text="✔ Transcription complete.",
+            fg="#2e7d32",
+            font=("Segoe UI", 9, "bold")
+        )
+        self.feedback_label.config(text="✅ Transcription complete. Output written.")
+        self.flash_status_success()
+        self.progress["value"] = 100
+        self.load_subtitle_to_right_pane(transcription_path)
+
+        tag_label = "Word-Level" if self.word_level_asr.get() else "Sentence-Level"
+        self.right_label.config(
+            text=f"🧠 ASR Generated: {os.path.basename(transcription_path)} [{tag_label}]"
+        )
+        print(f"[DEBUG] Total sync process time: {time.time() - t0:.2f}s", flush=True)
+    

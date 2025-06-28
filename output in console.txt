@@ -1,0 +1,176 @@
+PS C:\Users\heiko\Documentation Heiko\Programing Code\Python code\Subtitle-Sync> python "subtitle_sync_gui.1.9.30.py"
+C:\Users\heiko\AppData\Local\Programs\Python\Python313\Lib\site-packages\ctranslate2\__init__.py:8: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+ffmpeg version 2025-05-29-git-75960ac270-full_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.1.0 (Rev4, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-fontconfig --enable-iconv --enable-gnutls --enable-lcms2 --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-libsnappy --enable-zlib --enable-librist --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-libbluray --enable-libcaca --enable-libdvdnav --enable-libdvdread --enable-sdl2 --enable-libaribb24 --enable-libaribcaption --enable-libdav1d --enable-libdavs2 --enable-libopenjpeg --enable-libquirc --enable-libuavs3d --enable-libxevd --enable-libzvbi --enable-liboapv --enable-libqrencode --enable-librav1e --enable-libsvtav1 --enable-libvvenc --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxavs2 --enable-libxeve --enable-libxvid --enable-libaom --enable-libjxl --enable-libvpx --enable-mediafoundation --enable-libass --enable-frei0r --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-liblensfun --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-dxva2 --enable-d3d11va --enable-d3d12va --enable-ffnvcodec --enable-libvpl --enable-nvdec --enable-nvenc --enable-vaapi --enable-libshaderc --enable-vulkan --enable-libplacebo --enable-opencl --enable-libcdio --enable-openal --enable-libgme --enable-libmodplug --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libshine --enable-libtheora --enable-libtwolame --enable-libvo-amrwbenc --enable-libcodec2 --enable-libilbc --enable-libgsm --enable-liblc3 --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-ladspa --enable-libbs2b --enable-libflite --enable-libmysofa --enable-librubberband --enable-libsoxr --enable-chromaprint
+  libavutil      60.  3.100 / 60.  3.100
+  libavcodec     62.  3.101 / 62.  3.101
+  libavformat    62.  0.102 / 62.  0.102
+  libavdevice    62.  0.100 / 62.  0.100
+  libavfilter    11.  0.100 / 11.  0.100
+  libswscale      9.  0.100 /  9.  0.100
+  libswresample   6.  0.100 /  6.  0.100
+Input #0, matroska,webm, from 'C:/Users/heiko/Documentation Heiko/Programing Code/Python code/Subtitle-Sync/_Testsubs/Everybody Loves Raymond (1996) S09e13/Everybody Loves Raymond (1996) - S09E13 - Sister-In-Law.mkv':
+  Metadata:
+    title           : Everybody Loves Raymond S09E13
+    encoder         : libebml v1.3.5 + libmatroska v1.4.8
+    creation_time   : 2021-01-06T18:32:08.000000Z
+    Writing frontend: StaxRip v1.7.0.6
+  Duration: 00:22:22.63, start: 0.000000, bitrate: 3991 kb/s
+  Stream #0:0: Video: hevc (Main 10), yuv420p10le(tv), 1920x1080, SAR 1:1 DAR 16:9, 23.98 fps, 23.98 tbr, 1k tbn (default)
+    Metadata:
+      BPS             : 3795599
+      BPS-eng         : 3795599
+      DURATION        : 00:22:22.633000000
+      DURATION-eng    : 00:22:22.633000000
+      NUMBER_OF_FRAMES: 32191
+      NUMBER_OF_FRAMES-eng: 32191
+      NUMBER_OF_BYTES : 637012205
+      NUMBER_OF_BYTES-eng: 637012205
+      _STATISTICS_WRITING_APP: mkvmerge v20.0.0 ('I Am The Sun') 64-bit
+      _STATISTICS_WRITING_APP-eng: mkvmerge v20.0.0 ('I Am The Sun') 64-bit
+      _STATISTICS_WRITING_DATE_UTC: 2021-01-06 18:32:08
+      _STATISTICS_WRITING_DATE_UTC-eng: 2021-01-06 18:32:08
+      _STATISTICS_TAGS: BPS DURATION NUMBER_OF_FRAMES NUMBER_OF_BYTES
+      _STATISTICS_TAGS-eng: BPS DURATION NUMBER_OF_FRAMES NUMBER_OF_BYTES
+  Stream #0:1(eng): Audio: aac (LC), 48000 Hz, stereo, fltp, Start 0.020000 (default)
+    Metadata:
+      BPS             : 193551
+      BPS-eng         : 193551
+      DURATION        : 00:22:22.592000000
+      DURATION-eng    : 00:22:22.592000000
+      NUMBER_OF_FRAMES: 62934
+      NUMBER_OF_FRAMES-eng: 62934
+      NUMBER_OF_BYTES : 32482548
+      NUMBER_OF_BYTES-eng: 32482548
+      _STATISTICS_WRITING_APP: mkvmerge v20.0.0 ('I Am The Sun') 64-bit
+      _STATISTICS_WRITING_APP-eng: mkvmerge v20.0.0 ('I Am The Sun') 64-bit
+      _STATISTICS_WRITING_DATE_UTC: 2021-01-06 18:32:08
+      _STATISTICS_WRITING_DATE_UTC-eng: 2021-01-06 18:32:08
+      _STATISTICS_TAGS: BPS DURATION NUMBER_OF_FRAMES NUMBER_OF_BYTES
+      _STATISTICS_TAGS-eng: BPS DURATION NUMBER_OF_FRAMES NUMBER_OF_BYTES
+  Stream #0:2(eng): Subtitle: subrip (srt)
+    Metadata:
+      BPS             : 81
+      BPS-eng         : 81
+      DURATION        : 00:21:35.766000000
+      DURATION-eng    : 00:21:35.766000000
+      NUMBER_OF_FRAMES: 429
+      NUMBER_OF_FRAMES-eng: 429
+      NUMBER_OF_BYTES : 13169
+      NUMBER_OF_BYTES-eng: 13169
+      _STATISTICS_WRITING_APP: mkvmerge v20.0.0 ('I Am The Sun') 64-bit
+      _STATISTICS_WRITING_APP-eng: mkvmerge v20.0.0 ('I Am The Sun') 64-bit
+      _STATISTICS_WRITING_DATE_UTC: 2021-01-06 18:32:08
+      _STATISTICS_WRITING_DATE_UTC-eng: 2021-01-06 18:32:08
+      _STATISTICS_TAGS: BPS DURATION NUMBER_OF_FRAMES NUMBER_OF_BYTES
+      _STATISTICS_TAGS-eng: BPS DURATION NUMBER_OF_FRAMES NUMBER_OF_BYTES
+Stream mapping:
+  Stream #0:1 -> #0:0 (aac (native) -> pcm_s16le (native))
+Press [q] to stop, [?] for help
+Output #0, wav, to 'C:\Users\heiko\AppData\Local\Temp\tmpx0q305t9.wav':
+  Metadata:
+    INAM            : Everybody Loves Raymond S09E13
+    Writing frontend: StaxRip v1.7.0.6
+    ISFT            : Lavf62.0.102
+  Stream #0:0(eng): Audio: pcm_s16le ([1][0][0][0] / 0x0001), 16000 Hz, mono, s16, 256 kb/s (default)
+    Metadata:
+      encoder         : Lavc62.3.101 pcm_s16le
+      BPS             : 193551
+      BPS-eng         : 193551
+      DURATION        : 00:22:22.592000000
+      DURATION-eng    : 00:22:22.592000000
+      NUMBER_OF_FRAMES: 62934
+      NUMBER_OF_FRAMES-eng: 62934
+      NUMBER_OF_BYTES : 32482548
+      NUMBER_OF_BYTES-eng: 32482548
+      _STATISTICS_WRITING_APP: mkvmerge v20.0.0 ('I Am The Sun') 64-bit
+      _STATISTICS_WRITING_APP-eng: mkvmerge v20.0.0 ('I Am The Sun') 64-bit
+      _STATISTICS_WRITING_DATE_UTC: 2021-01-06 18:32:08
+      _STATISTICS_WRITING_DATE_UTC-eng: 2021-01-06 18:32:08
+      _STATISTICS_TAGS: BPS DURATION NUMBER_OF_FRAMES NUMBER_OF_BYTES
+      _STATISTICS_TAGS-eng: BPS DURATION NUMBER_OF_FRAMES NUMBER_OF_BYTES
+[out#0/wav @ 0000017b84ac3380] video:0KiB audio:41956KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: 0.000275%
+size=   41956KiB time=00:22:22.61 bitrate= 256.0kbits/s speed= 938x elapsed=0:00:01.43
+[DEBUG] Audio extracted in 1.66s
+[DEBUG] Audio extracted in 1.66s
+[DEBUG] Starting transcription...
+[DEBUG] Calling model.transcribe
+INFO:faster_whisper:Processing audio with duration 22:22.592
+INFO:faster_whisper:Detected language 'en' with probability 1.00
+DEBUG:faster_whisper:Processing segment at 00:00.000
+DEBUG:faster_whisper:Processing segment at 00:27.800
+DEBUG:faster_whisper:Processing segment at 00:57.800
+DEBUG:faster_whisper:Processing segment at 01:27.800
+DEBUG:faster_whisper:Processing segment at 01:55.540
+DEBUG:faster_whisper:Processing segment at 02:22.560
+DEBUG:faster_whisper:Processing segment at 02:52.560
+DEBUG:faster_whisper:Processing segment at 03:22.560
+DEBUG:faster_whisper:Processing segment at 03:48.580
+DEBUG:faster_whisper:Processing segment at 04:15.140
+DEBUG:faster_whisper:Processing segment at 04:45.140
+DEBUG:faster_whisper:Processing segment at 05:15.140
+DEBUG:faster_whisper:Processing segment at 05:45.140
+DEBUG:faster_whisper:Processing segment at 06:09.300
+DEBUG:faster_whisper:Processing segment at 06:36.300
+DEBUG:faster_whisper:Processing segment at 07:06.300
+DEBUG:faster_whisper:Processing segment at 07:36.300
+DEBUG:faster_whisper:Compression ratio threshold is not met with temperature 0.0 (6.673077 > 2.400000)
+DEBUG:faster_whisper:Compression ratio threshold is not met with temperature 0.2 (6.145833 > 2.400000)
+DEBUG:faster_whisper:Compression ratio threshold is not met with temperature 0.4 (3.354430 > 2.400000)
+DEBUG:faster_whisper:Reset prompt. prompt_reset_on_temperature threshold is met 0.600000 > 0.500000
+DEBUG:faster_whisper:Processing segment at 08:06.300
+DEBUG:faster_whisper:Processing segment at 08:33.540
+DEBUG:faster_whisper:Processing segment at 09:03.540
+DEBUG:faster_whisper:Processing segment at 09:33.540
+DEBUG:faster_whisper:Compression ratio threshold is not met with temperature 0.0 (29.105263 > 2.400000)
+DEBUG:faster_whisper:Compression ratio threshold is not met with temperature 0.2 (19.260870 > 2.400000)
+DEBUG:faster_whisper:Compression ratio threshold is not met with temperature 0.4 (29.105263 > 2.400000)
+DEBUG:faster_whisper:Reset prompt. prompt_reset_on_temperature threshold is met 0.600000 > 0.500000
+DEBUG:faster_whisper:Processing segment at 10:01.280
+DEBUG:faster_whisper:Processing segment at 10:19.200
+DEBUG:faster_whisper:Processing segment at 10:49.200
+DEBUG:faster_whisper:Processing segment at 11:19.200
+DEBUG:faster_whisper:Processing segment at 11:47.760
+DEBUG:faster_whisper:Processing segment at 12:16.940
+DEBUG:faster_whisper:Processing segment at 12:45.280
+DEBUG:faster_whisper:Processing segment at 13:14.460
+DEBUG:faster_whisper:Processing segment at 13:43.880
+DEBUG:faster_whisper:Processing segment at 14:13.880
+DEBUG:faster_whisper:Processing segment at 14:43.200
+DEBUG:faster_whisper:Processing segment at 15:13.200
+DEBUG:faster_whisper:Processing segment at 15:43.200
+DEBUG:faster_whisper:Processing segment at 16:13.180
+DEBUG:faster_whisper:Processing segment at 16:42.260
+DEBUG:faster_whisper:Processing segment at 17:12.260
+DEBUG:faster_whisper:Processing segment at 17:42.260
+DEBUG:faster_whisper:Processing segment at 18:12.240
+DEBUG:faster_whisper:Processing segment at 18:42.240
+DEBUG:faster_whisper:Processing segment at 19:12.240
+DEBUG:faster_whisper:Compression ratio threshold is not met with temperature 0.0 (3.811321 > 2.400000)
+DEBUG:faster_whisper:Processing segment at 19:42.240
+DEBUG:faster_whisper:Compression ratio threshold is not met with temperature 0.0 (7.133333 > 2.400000)
+DEBUG:faster_whisper:Compression ratio threshold is not met with temperature 0.2 (7.400000 > 2.400000)
+DEBUG:faster_whisper:Compression ratio threshold is not met with temperature 0.4 (7.400000 > 2.400000)
+DEBUG:faster_whisper:Compression ratio threshold is not met with temperature 0.6 (13.880000 > 2.400000)
+DEBUG:faster_whisper:Reset prompt. prompt_reset_on_temperature threshold is met 0.800000 > 0.500000
+DEBUG:faster_whisper:Processing segment at 20:11.020
+DEBUG:faster_whisper:Processing segment at 20:41.020
+DEBUG:faster_whisper:Processing segment at 21:11.020
+DEBUG:faster_whisper:Processing segment at 21:41.020
+DEBUG:faster_whisper:Compression ratio threshold is not met with temperature 0.0 (10.892857 > 2.400000)
+DEBUG:faster_whisper:Compression ratio threshold is not met with temperature 0.2 (10.892857 > 2.400000)
+DEBUG:faster_whisper:Compression ratio threshold is not met with temperature 0.4 (16.193548 > 2.400000)
+DEBUG:faster_whisper:Compression ratio threshold is not met with temperature 0.6 (16.916667 > 2.400000)
+DEBUG:faster_whisper:Reset prompt. prompt_reset_on_temperature threshold is met 0.800000 > 0.500000
+DEBUG:faster_whisper:Processing segment at 22:08.060
+[DEBUG] Transcription completed in 1960.91s
+[DEBUG] Transcription duration: 1960.91 seconds
+▶ Segment: 00:00:02,339 → 00:00:02,759 | Ha!
+▶ Segment: 00:00:05,000 → 00:00:05,660 | Hi, Ray!
+▶ Segment: 00:00:05,900 → 00:00:06,500 | Oh, hey.
+▶ Segment: 00:00:07,940 → 00:00:09,400 | Oh, uh, Deb's not here.
+▶ Segment: 00:00:09,519 → 00:00:11,660 | She's out with the kids, so I'm just, you know,
+[DEBUG] Subtitle writing complete in 0.72s
+[DEBUG] Total sync process time: 1970.65s
