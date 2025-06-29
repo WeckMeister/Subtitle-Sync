@@ -1,0 +1,67 @@
+[10:45:43] [INFO] READY - all logs will be recorded here.
+[10:45:47] [INFO] Video loaded: Matlock S05e22 The Celebrity.mkv
+[10:45:47] [INFO] Suggested export path: Matlock S05e22 The Celebrity.ASR05W.srt
+[10:45:50] [INFO] Subtitle loaded: Matlock - 5x22 - The Celebrity.DVDRip.en.srt
+[10:45:59] [WHISPER] [INFO] Processing audio with duration 45:31.619
+[10:46:07] [WHISPER] [INFO] Detected language 'en' with probability 0.50
+[10:46:07] [WHISPER] [DEBUG] Processing segment at 00:00.000
+[10:46:15] [WHISPER] [DEBUG] Processing segment at 00:30.000
+[10:46:23] [WHISPER] [DEBUG] Processing segment at 01:00.000
+[10:46:32] [WHISPER] [DEBUG] Processing segment at 01:29.980
+[10:46:54] [WHISPER] [DEBUG] Processing segment at 01:59.980
+[10:47:27] [WHISPER] [DEBUG] Processing segment at 02:29.980
+[10:48:00] [WHISPER] [DEBUG] Processing segment at 02:59.460
+[10:48:28] [WHISPER] [DEBUG] Processing segment at 03:29.460
+[10:49:21] [WHISPER] [DEBUG] Processing segment at 03:59.460
+[10:50:18] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.0 (15.518519 > 2.400000)
+[10:51:07] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.2 (15.518519 > 2.400000)
+[10:54:09] [WHISPER] [DEBUG] Processing segment at 04:29.440
+[10:55:04] [WHISPER] [DEBUG] Processing segment at 04:58.020
+[10:55:31] [WHISPER] [DEBUG] Processing segment at 05:27.800
+[10:57:23] [WHISPER] [DEBUG] Processing segment at 05:57.800
+[11:01:00] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.0 (11.618182 > 2.400000)
+[11:05:01] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.2 (7.836364 > 2.400000)
+[11:06:45] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.4 (11.235294 > 2.400000)
+[11:09:01] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.6 (5.939394 > 2.400000)
+[11:09:01] [WHISPER] [DEBUG] Log probability threshold is not met with temperature 0.6 (-1.053130 < -1.000000)
+[11:12:07] [WHISPER] [DEBUG] Log probability threshold is not met with temperature 0.8 (-2.189856 < -1.000000)
+[11:14:58] [WHISPER] [DEBUG] Log probability threshold is not met with temperature 1.0 (-2.542454 < -1.000000)
+[11:15:05] [WHISPER] [DEBUG] Reset prompt. prompt_reset_on_temperature threshold is met 1.000000 > 0.500000
+[11:15:05] [WHISPER] [DEBUG] Processing segment at 06:27.780
+[11:15:44] [WHISPER] [DEBUG] Processing segment at 06:57.780
+[11:17:08] [WHISPER] [DEBUG] Processing segment at 07:27.760
+[11:18:55] [WHISPER] [DEBUG] Processing segment at 07:57.760
+[11:19:51] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.0 (2.563291 > 2.400000)
+[11:20:39] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.2 (2.563291 > 2.400000)
+[11:21:16] [WHISPER] [DEBUG] Processing segment at 08:27.740
+[11:21:45] [WHISPER] [DEBUG] Processing segment at 08:57.740
+[11:22:39] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.0 (2.943503 > 2.400000)
+[11:23:31] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.2 (2.943503 > 2.400000)
+[11:24:17] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.4 (2.943503 > 2.400000)
+[11:25:01] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.6 (2.943503 > 2.400000)
+[11:25:45] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.8 (2.856354 > 2.400000)
+[11:26:07] [WHISPER] [DEBUG] Reset prompt. prompt_reset_on_temperature threshold is met 1.000000 > 0.500000
+[11:26:07] [WHISPER] [DEBUG] Processing segment at 09:27.740
+[11:26:25] [WHISPER] [DEBUG] Processing segment at 09:57.740
+[11:26:53] [WHISPER] [DEBUG] Processing segment at 10:27.480
+[11:27:27] [WHISPER] [DEBUG] Processing segment at 10:57.480
+[11:27:45] [WHISPER] [DEBUG] Processing segment at 11:27.480
+[11:28:42] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.0 (13.160714 > 2.400000)
+[11:29:38] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.2 (10.402985 > 2.400000)
+[11:30:32] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.4 (11.549020 > 2.400000)
+[11:31:25] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.6 (8.525424 > 2.400000)
+[11:32:12] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.8 (2.429348 > 2.400000)
+[11:32:12] [WHISPER] [DEBUG] Log probability threshold is not met with temperature 0.8 (-1.711558 < -1.000000)
+[11:34:57] [WHISPER] [DEBUG] Log probability threshold is not met with temperature 1.0 (-3.232532 < -1.000000)
+[11:35:03] [WHISPER] [DEBUG] Reset prompt. prompt_reset_on_temperature threshold is met 1.000000 > 0.500000
+[11:35:03] [WHISPER] [DEBUG] Processing segment at 11:57.460
+[11:36:35] [WHISPER] [DEBUG] Processing segment at 12:25.940
+[11:38:32] [WHISPER] [DEBUG] Processing segment at 12:55.940
+[11:39:08] [WHISPER] [DEBUG] Processing segment at 13:25.940
+[11:40:50] [WHISPER] [DEBUG] Processing segment at 13:55.940
+[11:44:02] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.0 (2.573991 > 2.400000)
+[11:46:09] [WHISPER] [DEBUG] Processing segment at 14:25.540
+[11:50:38] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.0 (2.537037 > 2.400000)
+[11:54:53] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.2 (13.250000 > 2.400000)
+[11:56:52] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.4 (13.250000 > 2.400000)
+[11:59:08] [WHISPER] [DEBUG] Compression ratio threshold is not met with temperature 0.6 (9.588235 > 2.400000)
