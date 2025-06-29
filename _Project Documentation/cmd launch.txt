@@ -1,0 +1,54 @@
+pyinstaller --onefile --windowed --icon=app_icon.ico subtitle_sync_app.py
+
+recreates app file
+
+launch python directly: 
+python subtitle_sync_app.py
+"C:\Users\heiko\Documentation Heiko\Programing Code\Python code\subtitle_sync_app.py"
+
+"C:\Users\heiko\Documentation Heiko\Programing Code\Python code\subtitle_sync_app_1.4.06.py"
+python subtitle_sync_app_1.4.06.py
+
+python "C:\Users\heiko\Documentation Heiko\Programing Code\Python code\subtitle_sync_app.py"
+
+pyinstaller subtitle_sync_app.py --onefile --windowed --add-data "ffmpeg.exe;."
+"C:\Users\heiko\Documentation Heiko\Programing Code\Python code\subtitle_sync_app.py"
+
+git remote add origin https://github.com/WeckMeister/Subtitle-Sync
+
+git remote add origin https://github.com/WeckMeister/Subtitle-Sync
+
+pyinstaller --onefile subtitle_sync_app.py
+
+______________________________________________________________________________
+
+More improvements for V2:
+
+Add a menu at the top to see properties of all the files selected
+File Properties _
+		Video
+		Subtitle
+
+so when i click on video submenu, a window appears with the video info, same for subtitle submenu under File Properties
+
+then for video, get the filename but also ffmpeg properties like type of file, screen ratio etc
+
+for subtitle display the name, date created etc
+
+extract the tv series season information from the filename , shownameS01E23 = season 1 episode 23
+file size, location etc for both (maybe try to link with information in related nfo files in file directory)
+
+After running sync, Provide options to display the generated files in the panes - either whisper or final synced 
+
+Then add option of clicking on a line to edit or delete it, 
+
+then add ability to run the final sync using the edited files without redoing the whisper transcription
+
+in fact, provide ability to import / select as previously generated whisper file and subtitle file and compare them to sync after edits
+
+so , basically need the ability to perform a sync without requiring whisper transcribing before i sync two files.
+
+also, when we select a file, try to add an optional filter to filter out episode numbers so i see only related files when filtered
+
+
+Ah yes, that’ll do it! Without that subfolder, PyInstaller couldn’t find the expected models/whisper-large-v3/ dir

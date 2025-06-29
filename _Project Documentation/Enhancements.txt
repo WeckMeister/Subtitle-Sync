@@ -55,5 +55,7 @@ set chunk size as variable in settings
 ______________
 
 before starting any sync or asr, after button was pushed inform user what file is being written to and provide cancel button to cancel the process
+Total process time – convert to hour minute seconds
 
+when naming the default output file, if video was selected, the video base name should be the output name, not the selected import subtitle as base
 
