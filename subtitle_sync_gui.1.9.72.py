@@ -16,10 +16,12 @@ import io
 import contextlib
 import re
 import traceback
+import os, json
 
 # run_asr_only
 # run_sync
 
+CONFIG_PATH = os.path.expanduser("~/.subtitle_sync_config.json")
 logging.basicConfig(level=logging.DEBUG)
 
 from huggingface_hub import snapshot_download
@@ -32,6 +34,21 @@ icon_path = os.path.join("icons", "import_video.png")
 
 from shutil import which
 from tkinter import messagebox, filedialog
+
+def load_config():
+    """Return a dict of saved settings, or {} if none exist."""
+    try:
+        return json.load(open(CONFIG_PATH, 'r', encoding='utf-8'))
+    except Exception:
+        return {}
+
+def save_config(cfg: dict):
+    """Persist config dict to disk."""
+    try:
+        with open(CONFIG_PATH, 'w', encoding='utf-8') as f:
+            json.dump(cfg, f, indent=2)
+    except Exception as e:
+        print("⚠️ Could not save config:", e)
 
 def find_ffmpeg() -> str:
     # 1) Try your bundled ffmpeg
@@ -180,9 +197,7 @@ def load_icon(name, master=None):
         return None
 
 # ─── ToolTip ────────────────────────────────────────────────────────────────
-class ToolTip:
-
-    
+class ToolTip:    
     def __init__(self, widget, text):
         self.widget = widget
         self.text = text
@@ -235,62 +250,52 @@ class SubtitleSyncApp:
         self.asr_path = ""
 
         # ─── Initialize paths and flags ─────────────────────────
-        self.video_path = tk.StringVar()
-        self.subtitle_path = tk.StringVar()
-        self.output_path = tk.StringVar()
+        self.video_path      = tk.StringVar()
+        self.subtitle_path   = tk.StringVar()
+        self.output_path     = tk.StringVar()
         self.export_filename = tk.StringVar(value="—")
-        self.flush_lines = tk.IntVar(value=10)
-        self.beam_size = tk.IntVar(value=5)
+        self.flush_lines     = tk.IntVar(value=10)
+        self.beam_size       = tk.IntVar(value=5)
+        self.match_threshold = tk.DoubleVar(value=10.0)
 
-        self.match_threshold = tk.DoubleVar(value=10.0)  # default threshold in seconds        
+        self.preview_buffer   = []
+        self.whisper_buffer   = []
+        self.word_level_asr   = tk.BooleanVar(value=True)
+        self.stop_flag        = threading.Event()
+        self.auto_scroll_right= True
+        self.chunk_size       = tk.IntVar(value=8)
+        self.chunk_step       = tk.IntVar(value=2)
 
-        self.preview_buffer = []
-        self.whisper_buffer = []
-        self.word_level_asr = tk.BooleanVar(value=True)
-        
-        self.stop_flag = threading.Event()
-        self.auto_scroll_right = True
-
-        self.chunk_size = tk.IntVar(value=8)
-        self.chunk_step = tk.IntVar(value=2)        
-
+        # Update beam display when beam_size changes
         self.beam_size.trace_add("write", lambda *args: self.update_beam_status())
 
+        # ─── Load last‐used file paths ───────────────────────────
+        cfg = load_config()
+        if cfg.get("video_path"):
+            self.video_path.set(cfg["video_path"])
+        if cfg.get("subtitle_path"):
+            self.subtitle_path.set(cfg["subtitle_path"])
+        if cfg.get("output_path"):
+            self.output_path.set(cfg["output_path"])
+
+        # ─── Load icons (your existing dictionary) ──────────────
         self.icons = {
-    "import_video": tk.PhotoImage(file=resource_path("icons/import_video.png")),
-    "import_subtitle": tk.PhotoImage(file=resource_path("icons/import_subtitle.png")),
-    "export": tk.PhotoImage(file=resource_path("icons/export.png")),
-    "sync": tk.PhotoImage(file=resource_path("icons/syncred.png")),
-    "sync_only": tk.PhotoImage(file=resource_path("icons/syncred.png")),    
-    "pause": tk.PhotoImage(file=resource_path("icons/pause.png")),
-    "stop": tk.PhotoImage(file=resource_path("icons/stop.png")),
-    "change_left": tk.PhotoImage(file=resource_path("icons/left_arrow.png")),
-    "change_right": tk.PhotoImage(file=resource_path("icons/right_arrow.png")),
-    "syncred": tk.PhotoImage(file=resource_path("icons/syncred.png")),     # for NOT ready states
-    "sync": tk.PhotoImage(file=resource_path("icons/sync.png")),           # for ready states
-    "syncgreen": tk.PhotoImage(file=resource_path("icons/syncgreen.png")),
-    "sync_only": tk.PhotoImage(file=resource_path("icons/sync.png")),  # ✅ Always this,
-    "live_scroll": tk.PhotoImage(file=resource_path("icons/live_scroll.png")),
-    "asr_only": tk.PhotoImage(file=resource_path("icons/asr_only.png")),    
-    "reset": tk.PhotoImage(file=resource_path("icons/broom.png")),
-}
-        
+            # … your icon setup here …
+        }
+
+        # Handle window close (to save config)
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
 
-
-        self.merge_comments = tk.BooleanVar(value=True)
-
-        # ─── Menu Bar ────────────────────────────────────────────
+        # ─── Build UI ───────────────────────────────────────────
         self.create_menu_bar()
-
-        # ─── Ribbon Toolbar ──────────────────────────────────────
         self.create_ribbon()
+        self.create_feedback_panel()
+        self.create_widgets()
 
-        # ─── Feedback Panel ──────────────────────────────────────
-        self.create_feedback_panel()   # 👈 this sets up self.export_label
-
-        # ─── Subtitle Viewer Panes and Controls ──────────────────
-        self.create_widgets()       
+        # Reflect loaded paths in status bar
+        self.update_status_bar()
+        self.debug("[INFO] READY - all logs will be recorded here.")
+  
       
     def on_close(self):
         self.stop_flag.set()        
@@ -1436,7 +1441,25 @@ class SubtitleSyncApp:
 
             adjusted.append(block)
 
-        return adjusted       
+        return adjusted   
+
+    def create_menu_bar(self):
+        menu_bar = tk.Menu(self.root)
+        # … existing menus …
+        pref_menu = tk.Menu(menu_bar, tearoff=0)
+        pref_menu.add_command(label="Clear Saved Paths", command=self.clear_saved_paths)
+        menu_bar.add_cascade(label="Preferences", menu=pref_menu)
+        self.root.config(menu=menu_bar)
+
+    def clear_saved_paths(self):
+        if messagebox.askyesno("Clear Defaults", "Remove saved file paths?"):
+            try:
+                os.remove(CONFIG_PATH)
+            except:
+                pass
+            self.video_path.set(""); self.subtitle_path.set(""); self.output_path.set("")
+            self.update_status_bar()
+            self.feedback_label.config(text="⚙️ Saved paths cleared.")        
 
     def parse_srt_time(self, ts):
         from datetime import datetime
