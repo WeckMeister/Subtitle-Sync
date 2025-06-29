@@ -1419,7 +1419,8 @@ class SubtitleSyncApp:
     def parse_srt_time(self, ts):
         from datetime import datetime
         t = datetime.strptime(ts.strip(), "%H:%M:%S,%f")
-        return t.hour * 3600 + t.minute * 60 + t.second + t.microsecond / 1_000_000               
+        return t.hour * 3600 + t.minute * 60 + t.second + t.microsecond / 1_000_000                
+
 
 if __name__ == "__main__":
     root = tk.Tk()  

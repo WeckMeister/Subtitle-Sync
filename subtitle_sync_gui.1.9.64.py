@@ -1,5 +1,5 @@
 from version import __versionMinor__  # type: ignore
-__version__ = __versionMinor__  + "64"
+__version__ = __versionMinor__  + "65"
 import os
 import sys
 import time
@@ -15,6 +15,7 @@ import logging
 import io
 import contextlib
 import re
+import traceback
 
 # run_asr_only
 # run_sync
@@ -100,6 +101,7 @@ class ModelDownloader(tk.Toplevel):
             self.result = e
             self.destroy()
 
+    @staticmethod
     def ensure_model(model_dir="models/whisper-large-v3"):
         import os
         from tkinter import messagebox, filedialog
@@ -1187,7 +1189,7 @@ class SubtitleSyncApp:
                             
     def run_asr_only(self):
         # 🔐 Ensure model is available up front
-        model_path = ensure_model()
+        model_path = ModelDownloader.ensure_model()
 
         import tempfile
         import os
